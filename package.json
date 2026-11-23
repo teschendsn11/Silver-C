@@ -1,0 +1,24 @@
+{
+  "name": "silver-cock-service",
+  "scripts": {
+    "dev": "bun run --hot src/index.ts",
+    "fetch": "bun run src/scripts/fetchLeagueData.ts",
+    "fetch:all": "bun run src/scripts/fetchLeagueData.ts --all",
+    "my-leagues": "bun run src/scripts/listMyLeagues.ts",
+    "ingest": "bun run src/scripts/ingestLeagueData.ts",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "db:reset": "docker compose down -v && docker compose up -d && atlas migrate apply --env local",
+    "db:diff": "atlas migrate diff --env local",
+    "db:apply": "atlas migrate apply --env local",
+    "db:status": "atlas migrate status --env local",
+    "db:lint": "atlas migrate lint --env local --latest 1"
+  },
+  "dependencies": {
+    "hono": "^4.13.16",
+    "yahoo-fantasy": "^5.4.1"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}

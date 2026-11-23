@@ -1,0 +1,76 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    dependencies:
+      hono:
+        specifier: ^4.13.16
+        version: 4.13.19
+      yahoo-fantasy:
+        specifier: ^5.4.1
+        version: 5.4.1
+    devDependencies:
+      '@types/bun':
+        specifier: latest
+        version: 1.4.5
+
+packages:
+
+  '@types/bun@1.4.5':
+    resolution: {integrity: sha512-DpgwNI9z0L1S0gtb45QLCWgwCUcMLnsHYMJHQvpNj7erGiCGBvpggltAIeARrtobNMKMuy0UP7i56tKKgwFs/Q==}
+
+  '@types/node@26.6.6':
+    resolution: {integrity: sha512-MzQj+8Kx3XI40OmUAE6Qoh58ZMNstNNMwn2nfd3qWsfe7nDNSqJNzes4njhz6AHwrSHOffSLwXU6yb474Q4aog==}
+
+  bun-types@1.4.5:
+    resolution: {integrity: sha512-ECHn+9dhL3wv0G6u0+7dQvrnaimXiRDxxerYBmhTaLyJEEuvTPWk2Fye3XIf5Y++JIIiHKfQw4Z7V5D8KuiXbg==}
+
+  esm@3.2.25:
+    resolution: {integrity: sha512-U1suiZ2oDVWv4zPO56S0NcR5QriEahGtdN2OR6FiOG4WJvcjBVFB0qI4+eKoWFH483PKGuLuu6V8Z4T5g63UVA==}
+    engines: {node: '>=6'}
+
+  hono@4.13.19:
+    resolution: {integrity: sha512-KmXvQAXwcAHV+muzbIwoJ23niEB5nMoDVr9WcRkU8mvjUECm/1+7v4Jgp7P7a+H6MLFrh+vXrGonGrGS+RQfkA==}
+    engines: {node: '>=16.9.0'}
+
+  undici-types@8.13.1:
+    resolution: {integrity: sha512-wEtfquPVc1e9umZh73XVwnPauVuGQp20M/u/4ENuWMRkZ8NZx0ut6q3HLLdMUb9awNlxxHcsaGVhaerZu/2SSw==}
+
+  undici-types@8.9.0:
+    resolution: {integrity: sha512-KTDyRTYX8sWmKXAikPHHSyc63CRPETMctyjKFupcC6OBLXT3xsN0e9aF7m+mIXutFWpUXuedtowG7iLOzp0kQg==}
+
+  yahoo-fantasy@5.4.1:
+    resolution: {integrity: sha512-GG/OOu/BoepUovIknMrZfUsMiT+tnaVlH4vIC4sw44pxZmDIhAYJPZ/QfVke3G3ZVAkIHGo9iejerXMQoYLXvQ==}
+    engines: {node: '>= 8.10.0'}
+
+snapshots:
+
+  '@types/bun@1.4.5':
+    dependencies:
+      bun-types: 1.4.5
+
+  '@types/node@26.6.6':
+    dependencies:
+      undici-types: 8.9.0
+
+  bun-types@1.4.5:
+    dependencies:
+      '@types/node': 26.6.6
+      undici-types: 8.13.1
+
+  esm@3.2.25: {}
+
+  hono@4.13.19: {}
+
+  undici-types@8.13.1: {}
+
+  undici-types@8.9.0: {}
+
+  yahoo-fantasy@5.4.1:
+    dependencies:
+      esm: 3.2.25

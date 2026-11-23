@@ -1,0 +1,110 @@
+-- Migration: 20261120223000_init_league_tables.sql
+-- Description: Create initial schema for leagues, seasons, teams, managers, standings, matchups, and draft picks
+
+-- 1. Leagues
+CREATE TABLE IF NOT EXISTS leagues (
+    id VARCHAR(64) PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    sport VARCHAR(32) NOT NULL DEFAULT 'nfl',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- 2. Seasons
+CREATE TABLE IF NOT EXISTS seasons (
+    id VARCHAR(64) PRIMARY KEY,
+    league_id VARCHAR(64) NOT NULL REFERENCES leagues(id) ON DELETE CASCADE,
+    season_year VARCHAR(8) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    num_teams INTEGER NOT NULL DEFAULT 0,
+    scoring_type VARCHAR(64) NOT NULL DEFAULT 'head',
+    current_week INTEGER,
+    start_week INTEGER NOT NULL DEFAULT 1,
+    end_week INTEGER NOT NULL DEFAULT 17,
+    renewed_from_league_key VARCHAR(64),
+    renewed_to_league_key VARCHAR(64),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT uq_season_league_year UNIQUE (league_id, season_year)
+);
+
+CREATE INDEX IF NOT EXISTS idx_seasons_league_id ON seasons(league_id);
+
+-- 3. Teams
+CREATE TABLE IF NOT EXISTS teams (
+    id VARCHAR(64) PRIMARY KEY,
+    season_id VARCHAR(64) NOT NULL REFERENCES seasons(id) ON DELETE CASCADE,
+    team_id VARCHAR(32) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    logo_url TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_teams_season_id ON teams(season_id);
+
+-- 4. Managers
+CREATE TABLE IF NOT EXISTS managers (
+    id SERIAL PRIMARY KEY,
+    team_id VARCHAR(64) NOT NULL REFERENCES teams(id) ON DELETE CASCADE,
+    manager_id VARCHAR(64) NOT NULL,
+    nickname VARCHAR(255) NOT NULL,
+    guid VARCHAR(128),
+    is_commissioner BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_managers_team_id ON managers(team_id);
+
+-- 5. Standings
+CREATE TABLE IF NOT EXISTS standings (
+    id SERIAL PRIMARY KEY,
+    season_id VARCHAR(64) NOT NULL REFERENCES seasons(id) ON DELETE CASCADE,
+    team_id VARCHAR(64) NOT NULL REFERENCES teams(id) ON DELETE CASCADE,
+    rank INTEGER NOT NULL,
+    wins INTEGER NOT NULL DEFAULT 0,
+    losses INTEGER NOT NULL DEFAULT 0,
+    ties INTEGER NOT NULL DEFAULT 0,
+    points_for NUMERIC(10, 2) NOT NULL DEFAULT 0,
+    points_against NUMERIC(10, 2) NOT NULL DEFAULT 0,
+    streak_type VARCHAR(16),
+    streak_value INTEGER,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT uq_standings_season_team UNIQUE (season_id, team_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_standings_season_id ON standings(season_id);
+
+-- 6. Matchups
+CREATE TABLE IF NOT EXISTS matchups (
+    id SERIAL PRIMARY KEY,
+    season_id VARCHAR(64) NOT NULL REFERENCES seasons(id) ON DELETE CASCADE,
+    week INTEGER NOT NULL,
+    is_playoffs BOOLEAN NOT NULL DEFAULT FALSE,
+    team1_id VARCHAR(64) NOT NULL REFERENCES teams(id) ON DELETE CASCADE,
+    team1_score NUMERIC(10, 2) NOT NULL DEFAULT 0,
+    team1_projected NUMERIC(10, 2),
+    team2_id VARCHAR(64) NOT NULL REFERENCES teams(id) ON DELETE CASCADE,
+    team2_score NUMERIC(10, 2) NOT NULL DEFAULT 0,
+    team2_projected NUMERIC(10, 2),
+    winner_team_id VARCHAR(64) REFERENCES teams(id) ON DELETE SET NULL,
+    is_tied BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT uq_matchup_week_teams UNIQUE (season_id, week, team1_id, team2_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_matchups_season_week ON matchups(season_id, week);
+
+-- 7. Draft Picks
+CREATE TABLE IF NOT EXISTS draft_picks (
+    id SERIAL PRIMARY KEY,
+    season_id VARCHAR(64) NOT NULL REFERENCES seasons(id) ON DELETE CASCADE,
+    team_id VARCHAR(64) NOT NULL REFERENCES teams(id) ON DELETE CASCADE,
+    round INTEGER NOT NULL,
+    pick INTEGER NOT NULL,
+    player_key VARCHAR(64) NOT NULL,
+    player_name VARCHAR(255),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT uq_draft_picks_season_round_pick UNIQUE (season_id, round, pick)
+);
+
+CREATE INDEX IF NOT EXISTS idx_draft_picks_season_id ON draft_picks(season_id);
