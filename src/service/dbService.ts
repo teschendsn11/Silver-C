@@ -1,4 +1,5 @@
 import { getDb } from "../db/client";
+import { AnalyticsService } from "./analyticsService";
 import type {
   HistoricalLeagueExport,
   SeasonHistory,
@@ -15,6 +16,8 @@ export interface IngestionSummary {
 }
 
 export class DatabaseIngestService {
+  private analyticsService = new AnalyticsService();
+
   /**
    * Ingests full HistoricalLeagueExport payload into PostgreSQL.
    */
@@ -53,6 +56,9 @@ export class DatabaseIngestService {
     }
 
     console.log(`[DatabaseIngest] Successfully ingested ${seasonsCount} seasons for ${summary.name}!`);
+
+    // 3. Persist Aggregates (Hybrid Strategy)
+    await this.analyticsService.persistAggregates(payload);
 
     return {
       leaguesCount: 1,

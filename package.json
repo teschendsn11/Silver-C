@@ -6,13 +6,15 @@
     "fetch:all": "bun run src/scripts/fetchLeagueData.ts --all",
     "my-leagues": "bun run src/scripts/listMyLeagues.ts",
     "ingest": "bun run src/scripts/ingestLeagueData.ts",
-    "db:up": "docker compose up -d",
-    "db:down": "docker compose down",
-    "db:reset": "docker compose down -v && docker compose up -d && atlas migrate apply --env local",
+    "analytics": "bun run src/scripts/showAnalytics.ts",
+    "db:up": "docker compose --env-file /dev/null up -d",
+    "db:down": "docker compose --env-file /dev/null down",
+    "db:reset": "docker compose --env-file /dev/null down -v && docker compose --env-file /dev/null up -d && bun run db:migrate",
     "db:diff": "atlas migrate diff --env local",
     "db:apply": "atlas migrate apply --env local",
     "db:status": "atlas migrate status --env local",
-    "db:lint": "atlas migrate lint --env local --latest 1"
+    "db:lint": "atlas migrate lint --env local --latest 1",
+    "db:migrate": "bun run src/scripts/migrate.ts"
   },
   "dependencies": {
     "hono": "^4.13.16",
